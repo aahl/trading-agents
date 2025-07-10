@@ -1,0 +1,72 @@
+name: Build and Push Docker Image
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version
+        required: false
+        default: ''
+  schedule:
+    - cron: "0 20 */3 * *"
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Docker tags
+        run: |
+          ver="${{ github.event.inputs.version }}"
+          if [ -n "$ver" ]; then
+            tags="type=raw,value=$ver"
+          else
+            ver=$(curl -s https://data.jsdelivr.com/v1/packages/gh/hsliuping/TradingAgents-CN | jq -r '.versions[-1].version')
+            tags=$({
+              echo "type=raw,value=$ver"
+              echo "type=raw,value=latest"
+            })
+          fi
+          $ver=${ver/cn-v/}
+          $ver=${ver/cn-/}
+          echo "VERSION=$ver" >> $GITHUB_ENV
+          {
+            echo 'ALL_TAGS<<EOF'
+            echo "$tags"
+            echo "type=raw,value=${ver%.*}"
+            echo "type=raw,value=${ver%.*.*}"
+            echo EOF
+          } >> $GITHUB_ENV
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}
+          tags: ${{ env.ALL_TAGS }}
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+          build-args: |
+            VERSION=${{ env.VERSION }}
+          platforms: linux/amd64,linux/arm64

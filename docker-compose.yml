@@ -1,0 +1,13 @@
+services:
+  trading-agents:
+    container_name: trading-agents
+    image: ghcr.nju.edu.cn/aahl/trading-agents
+    ports:
+      - 8501:8501
+    volumes:
+      - .:/root/Documents/TradingAgents
+      - .env:/app/.env
+    environment:
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY}
+      FINNHUB_API_KEY: ${FINNHUB_API_KEY}
+    restart: unless-stopped
