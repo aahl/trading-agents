@@ -25,9 +25,9 @@ jobs:
               echo "type=raw,value=latest"
             })
           fi
-          $ver=${ver/cn-v/}
-          $ver=${ver/cn-/}
           echo "VERSION=$ver" >> $GITHUB_ENV
+          ver=${ver/cn-v/}
+          ver=${ver/cn-/}
           {
             echo 'ALL_TAGS<<EOF'
             echo "$tags"
