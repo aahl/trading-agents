@@ -15,7 +15,10 @@ echo "FINNHUB_API_KEY=your_finnhub_api_key" >> .env
 docker compose up -d
 docker compose logs -f -n 20
 
-# 访问 http://localhost:8501
+# 网页端访问 http://localhost:8501
+
+# 终端交互命令
+docker exec -it trading-agents uv run -m cli.main
 ```
 
 ## 🔗 Links
