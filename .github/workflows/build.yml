@@ -19,7 +19,7 @@ jobs:
           if [ -n "$ver" ]; then
             tags="type=raw,value=$ver"
           else
-            ver=$(curl -s https://data.jsdelivr.com/v1/packages/gh/hsliuping/TradingAgents-CN | jq -r '.versions[-1].version')
+            ver=$(curl -s https://data.jsdelivr.com/v1/packages/gh/hsliuping/TradingAgents-CN | jq -r '.versions[0].version')
             tags=$({
               echo "type=raw,value=$ver"
               echo "type=raw,value=latest"
