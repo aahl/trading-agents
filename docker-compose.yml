@@ -8,6 +8,8 @@ services:
       - .:/root/Documents/TradingAgents
       - .env:/app/.env
     environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL} # 支持 newapi/oneapi 等
       DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY}
       FINNHUB_API_KEY: ${FINNHUB_API_KEY}
     restart: unless-stopped

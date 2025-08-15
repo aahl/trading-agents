@@ -13,7 +13,9 @@ RUN set -eux; \
     wget https://github.com/hsliuping/TradingAgents-CN/archive/refs/heads/main.tar.gz -O- | tar zxvf - --strip 1 -C /app; \
     sed -i 's/localhost/0.0.0.0/g' .streamlit/config.toml; \
     sed -i 's/langchain-google-genai>=2.1.5/langchain-google-genai>=2.0/g' pyproject.toml; \
-    pwd;
+    if [ -n "$OPENAI_BASE_URL" ]; then \
+      sed -i "s#https://api.openai.com/v1#$OPENAI_BASE_URL#g" web/utils/analysis_runner.py; \
+    fi;
 
 RUN apt install -y --no-install-recommends \
     build-essential pandoc procps wkhtmltopdf \
