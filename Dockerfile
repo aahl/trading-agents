@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:python3.13-bookworm
+FROM ghcr.io/astral-sh/uv:python3.10-bookworm
 
 ARG VERSION=main
 ENV UV_HTTP_TIMEOUT=60 \
@@ -12,9 +12,8 @@ RUN set -eux; \
     apt install -y --no-install-recommends wget; \
     wget https://github.com/hsliuping/TradingAgents-CN/archive/refs/heads/main.tar.gz -O- | tar zxvf - --strip 1 -C /app; \
     sed -i 's/localhost/0.0.0.0/g' .streamlit/config.toml; \
-    echo '3.13' > .python-version; \
     uv venv;
-RUN uv add -r requirements.txt;
+RUN uv add -r requirements.txt  --frozen;
 
 CMD ["uv", "run", "streamlit", "run", "web/app.py"]
 HEALTHCHECK --interval=1m --start-period=50s CMD wget --spider --no-verbose 0.0.0.0:8501 || exit 1
