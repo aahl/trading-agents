@@ -13,8 +13,14 @@ RUN set -eux; \
     wget https://github.com/hsliuping/TradingAgents-CN/archive/refs/heads/main.tar.gz -O- | tar zxvf - --strip 1 -C /app; \
     sed -i 's/localhost/0.0.0.0/g' .streamlit/config.toml; \
     sed -i 's/langchain-google-genai>=2.1.5/langchain-google-genai>=2.0/g' pyproject.toml; \
-    uv venv;
-RUN uv pip install -e .
+    pwd;
+
+RUN apt install -y --no-install-recommends \
+    build-essential pandoc procps wkhtmltopdf \
+    fonts-wqy-zenhei fonts-wqy-microhei fonts-liberation \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN uv venv && uv pip install -e .
 
 CMD ["uv", "run", "streamlit", "run", "web/app.py"]
 HEALTHCHECK --interval=1m --start-period=50s CMD wget --spider --no-verbose 0.0.0.0:8501 || exit 1
