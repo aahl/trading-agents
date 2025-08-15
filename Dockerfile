@@ -12,8 +12,9 @@ RUN set -eux; \
     apt install -y --no-install-recommends wget; \
     wget https://github.com/hsliuping/TradingAgents-CN/archive/refs/heads/main.tar.gz -O- | tar zxvf - --strip 1 -C /app; \
     sed -i 's/localhost/0.0.0.0/g' .streamlit/config.toml; \
+    sed -i 's/langchain-google-genai>=2.1.5/langchain-google-genai>=2.0/g' pyproject.toml; \
     uv venv;
-RUN uv pip install -e .;
+RUN uv pip install -e .
 
 CMD ["uv", "run", "streamlit", "run", "web/app.py"]
 HEALTHCHECK --interval=1m --start-period=50s CMD wget --spider --no-verbose 0.0.0.0:8501 || exit 1
