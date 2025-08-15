@@ -12,6 +12,7 @@ RUN set -eux; \
     apt install -y --no-install-recommends wget; \
     wget https://github.com/hsliuping/TradingAgents-CN/archive/refs/heads/main.tar.gz -O- | tar zxvf - --strip 1 -C /app; \
     sed -i 's/localhost/0.0.0.0/g' .streamlit/config.toml; \
+    echo '3.13' > .python-version; \
     uv venv;
 RUN uv add -r requirements.txt;
 
